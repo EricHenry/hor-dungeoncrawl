@@ -1,5 +1,4 @@
-use crate::camera::Camera;
-use crate::prelude::{to_cp437, BTerm, Point, BLACK, SCREEN_HEIGHT, SCREEN_WIDTH, WHITE};
+use crate::prelude::{Point, SCREEN_HEIGHT, SCREEN_WIDTH};
 use crate::NUM_TILES;
 
 #[derive(Copy, Clone, PartialEq)]
@@ -36,33 +35,6 @@ impl Map {
             None
         } else {
             Some(map_idx(point.x, point.y))
-        }
-    }
-
-    pub fn render(&self, ctx: &mut BTerm, camera: &Camera) {
-        ctx.set_active_console(0);
-        for y in camera.top_y..camera.bottom_y {
-            for x in camera.left_x..camera.right_x {
-                if self.in_bounds(Point::new(x, y)) {
-                    let idx = map_idx(x, y);
-                    match self.tiles[idx] {
-                        TileType::Floor => ctx.set(
-                            x - camera.left_x,
-                            y - camera.top_y,
-                            WHITE,
-                            BLACK,
-                            to_cp437('.'),
-                        ),
-                        TileType::Wall => ctx.set(
-                            x - camera.left_x,
-                            y - camera.top_y,
-                            WHITE,
-                            BLACK,
-                            to_cp437('#'),
-                        ),
-                    }
-                }
-            }
         }
     }
 }
