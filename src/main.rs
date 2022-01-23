@@ -3,6 +3,7 @@ mod components;
 mod map;
 mod map_builder;
 mod spawner;
+mod systems;
 
 mod prelude {
     pub use bracket_lib::prelude::*;
@@ -15,6 +16,7 @@ mod prelude {
     pub use crate::map::*;
     pub use crate::map_builder::*;
     pub use crate::spawner::*;
+    pub use crate::systems::*;
     pub use legion::systems::CommandBuffer;
     pub use legion::world::SubWorld;
     pub use legion::*;
@@ -24,9 +26,9 @@ use prelude::*;
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 
 struct State {
-    ecs: World,
-    resources: Resources,
-    systems: Schedule,
+    ecs: World,           // where Legion stores all entities and components
+    resources: Resources, // resources are shared data available to all systems
+    systems: Schedule,    // a schedule holds on to systems, responsible for managing systems
 }
 
 impl State {
@@ -35,7 +37,7 @@ impl State {
         let mut resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
-        spawn_player(&mut ecs, map_builder.player_start);
+        spawn_player(&mut ecs, map_builder.player_start); // add player entity to the world
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
         Self {
@@ -52,10 +54,12 @@ impl GameState for State {
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
-        // TODO: Execute Systems
-        // TODO: Render draw buffer
+        self.resources.insert(ctx.key); // ctx.key holds the keyboard state
+        self.systems.execute(&mut self.ecs, &mut self.resources);
+        render_draw_buffer(ctx).expect("Render error");
     }
 }
+
 fn main() -> BError {
     let context = BTermBuilder::new()
         .with_title("Dungeon Crawler")
