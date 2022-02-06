@@ -1,3 +1,4 @@
+mod chasing;
 mod combat;
 mod end_turn;
 mod entity_render;
@@ -47,7 +48,8 @@ pub fn build_player_scheduler() -> Schedule {
 /// Build a scheduler used when we are in the `MonsterTurn` State
 pub fn build_monster_scheduler() -> Schedule {
     Schedule::builder()
-        .add_system(random_move::random_move_system())
+        // .add_system(random_move::random_move_system())
+        .add_system(chasing::chasing_system())
         // flush is called when a system makes changes to the ECS dataset.
         .flush()
         .add_system(combat::combat_system())
