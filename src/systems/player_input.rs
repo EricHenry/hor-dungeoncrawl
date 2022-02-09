@@ -19,6 +19,7 @@ pub fn player_input(
             VirtualKeyCode::Down => Point::new(0, 1),
             _ => Point::new(0, 0),
         };
+
         let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
         let (player_entity, destination) = players
             .iter(ecs)

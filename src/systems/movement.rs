@@ -6,6 +6,7 @@ use crate::prelude::*;
 /// a query that reads Entity and WantsToMove and iterating it as you have with other systems.
 #[system(for_each)]
 #[read_component(Player)]
+#[read_component(FieldOfView)]
 pub fn movement(
     entity: &Entity,
     want_move: &WantsToMove,
@@ -18,16 +19,17 @@ pub fn movement(
         // its safer & more efficient to use commands rather than modifying the component directly
         // adding a component that already exists replaces the old one.
         commands.add_component(want_move.entity, want_move.destination);
-        if ecs
-            // can access the details of another component with the `entry_ref` method.
-            // Entities are only available if you've specified the components that they
-            // use in your `read_component` or `write_component` declarations for the system
-            .entry_ref(want_move.entity)
-            .unwrap() // we know the entity exists since its' provided to the system
-            .get_component::<Player>()
-            .is_ok()
-        {
-            camera.on_player_move(want_move.destination);
+
+        // can access the details of another component with the `entry_ref` method.
+        // Entities are only available if you've specified the components that they
+        // use in your `read_component` or `write_component` declarations for the system
+        if let Ok(entry) = ecs.entry_ref(want_move.entity) {
+            if let Ok(fov) = entry.get_component::<FieldOfView>() {
+                commands.add_component(want_move.entity, fov.clone_dirty());
+            }
+            if entry.get_component::<Player>().is_ok() {
+                camera.on_player_move(want_move.destination);
+            }
         }
     }
     // its important to remove messages once they are processed. if you don't, they will
