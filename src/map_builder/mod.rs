@@ -1,8 +1,10 @@
 mod automata;
+mod drunkard;
 mod empty;
 mod rooms;
 
 use crate::map_builder::automata::CellularAutomataArchitect;
+use crate::map_builder::drunkard::DrunkardsWalkArchitect;
 use crate::prelude::*;
 use empty::EmptyArchitect;
 use rooms::RoomsArchitect;
@@ -23,10 +25,19 @@ pub struct MapBuilder {
 
 impl MapBuilder {
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
-        // let mut architect = EmptyArchitect {};
-        // let mut architect = RoomsArchitect {};
-        let mut architect = CellularAutomataArchitect {};
-        architect.new(rng)
+        // Box is a smart pointer, used when you want to store a type that might be anything that
+        // implments the MapArchitect trait. The smart pointer creates the architect type I requested
+        // and holds a pointer to it. When Box is destroyed, it takes care of deleting the contained
+        // object. The type needs to be annotated with `dyn` (dynamic dispatch). Internally, Rust
+        // has added a lookup table to figure out what type is actually in the box and runs the
+        // appropriate code.
+        let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
+            0 => Box::new(DrunkardsWalkArchitect {}),
+            1 => Box::new(RoomsArchitect {}),
+            _ => Box::new(CellularAutomataArchitect {}),
+        };
+        let mut mb = architect.new(rng);
+        mb
     }
 
     fn fill(&mut self, tile: TileType) {
