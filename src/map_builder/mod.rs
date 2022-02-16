@@ -1,12 +1,13 @@
 mod automata;
 mod drunkard;
 mod empty;
+mod prefab;
 mod rooms;
 
-use crate::map_builder::automata::CellularAutomataArchitect;
-use crate::map_builder::drunkard::DrunkardsWalkArchitect;
 use crate::prelude::*;
-use empty::EmptyArchitect;
+use automata::CellularAutomataArchitect;
+use drunkard::DrunkardsWalkArchitect;
+use prefab::apply_prefab;
 use rooms::RoomsArchitect;
 
 trait MapArchitect {
@@ -37,6 +38,7 @@ impl MapBuilder {
             _ => Box::new(CellularAutomataArchitect {}),
         };
         let mut mb = architect.new(rng);
+        apply_prefab(&mut mb, rng);
         mb
     }
 
