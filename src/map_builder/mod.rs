@@ -34,7 +34,7 @@ pub struct MapBuilder {
 impl MapBuilder {
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
         // Box is a smart pointer, used when you want to store a type that might be anything that
-        // implments the MapArchitect trait. The smart pointer creates the architect type I requested
+        // implements the MapArchitect trait. The smart pointer creates the architect type I requested
         // and holds a pointer to it. When Box is destroyed, it takes care of deleting the contained
         // object. The type needs to be annotated with `dyn` (dynamic dispatch). Internally, Rust
         // has added a lookup table to figure out what type is actually in the box and runs the
