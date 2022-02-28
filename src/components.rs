@@ -89,3 +89,9 @@ impl FieldOfView {
         }
     }
 }
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Damage(pub i32);
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Weapon;
