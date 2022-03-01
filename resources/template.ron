@@ -42,7 +42,7 @@ Templates(
         ),
         Template(
             entity_type: Item,
-            name : "Rusty Sword",
+            name : "Great Sword",
             glyph : '/',
             levels : [ 1, 2 ],
             frequency: 1,
